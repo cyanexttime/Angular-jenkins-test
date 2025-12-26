@@ -5,11 +5,12 @@ pipeline{
         nodejs 'NODE22'
     }
 
-    parameters{
-        choice {
+    parameters {
+        choice(
             name: 'ENV',
-            choices: ['dev', 'preprod', 'prod']
-        }
+            choices: 'dev\npreprod\nprod',
+            description: 'Select environment'
+        )
     }
 
     stages{
