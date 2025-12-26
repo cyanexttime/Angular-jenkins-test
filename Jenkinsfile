@@ -4,6 +4,14 @@ pipeline{
     tools{
         nodejs 'NODE22'
     }
+
+    parameters{
+        choice {
+            name: 'ENV',
+            choices: ['dev', 'preprod', 'prod']
+        }
+    }
+
     stages{
         stage('Fetch code') {
             steps{
@@ -19,9 +27,11 @@ pipeline{
         
         stage('Build') {
             steps {
+                sh 'export $(cat .env | xargs)'
+                sh 'echo "Building for ENV=$ENV"'
                 sh 'ng build'
-                sh 'zip -r angular-dist.zip dist/'
-                archiveArtifacts artifacts: 'angular-dist.zip'
+                sh 'zip -r angular-dist-of-${ENV}.zip dist/'
+                archiveArtifacts artifacts: 'angular-dist-of-${ENV}.zip'
             }
         }
 
