@@ -32,7 +32,7 @@ pipeline{
                 sh 'echo "Building for ENV=$ENV"'
                 sh 'ng build'
                 sh 'zip -r angular-dist-of-${ENV}.zip dist/'
-                archiveArtifacts artifacts: 'angular-dist-of-${ENV}.zip'
+                archiveArtifacts artifacts: "angular-dist-of-${ENV}.zip"
             }
         }
 
