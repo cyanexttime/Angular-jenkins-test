@@ -15,11 +15,17 @@ pipeline{
 
     stages{
         stage('Fetch code') {
+            agent{
+                label 'built-in'
+            }
             steps{
                 git branch: 'main', url: 'https://github.com/cyanexttime/Angular-jenkins-test.git'
             }
         }
         stage('Install dependencies') {
+            agent{
+                label 'built-in'
+            }
             steps {
                 sh 'npm install'
                 sh 'npm install -g @angular/cli'
@@ -27,6 +33,9 @@ pipeline{
         }
         
         stage('Build') {
+            agent{
+                label 'built-in'
+            }
             steps {
                 sh 'export $(cat .env | xargs)'
                 sh 'echo "Building for ENV=$ENV"'
@@ -37,6 +46,9 @@ pipeline{
         }
 
         stage('Test')  {
+            agent{
+                label 'built-in'
+            }
             steps {
                 sh 'ng test'
             }
