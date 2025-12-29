@@ -1,55 +1,97 @@
-pipeline{
-    agent any
+// pipeline{
+//     agent any
 	
-    tools{
+//     tools{
+//         nodejs 'NODE22'
+//     }
+
+//     // parameters {
+//     //     choice(
+//     //         name: 'ENV',
+//     //         choices: 'dev\npreprod\nprod',
+//     //         description: 'Select environment'
+//     //     )
+//     // }
+
+//     stages{
+//         stage('Fetch code') {
+//             // agent{
+//             //     label 'built-in'
+//             // }
+//             steps{
+//                 git branch: 'main', url: 'https://github.com/cyanexttime/Angular-jenkins-test.git'
+//             }
+//         }
+//         stage('Install dependencies') {
+//             // agent{
+//             //     label 'built-in'
+//             // }
+//             steps {
+//                 sh 'npm install'
+//                 sh 'npm install @angular/cli'
+//             }
+//         }
+        
+//         stage('Build') {
+//             // agent{
+//             //     label 'built-in'
+//             // }
+//             steps {
+//                 echo "Branch name: ${env.BRANCH_NAME}"
+//                 sh 'ng build'
+//                 sh 'zip -r angular-dist-of-$GIT_.zip dist/'
+//                 archiveArtifacts artifacts: "angular-dist-of-${env.BRANCH_NAME}.zip"
+//             }
+//         }
+
+//         stage('Test')  {
+//             // agent{
+//             //     label 'built-in'
+//             // }
+//             steps {
+//                 sh 'ng test'
+//             }
+//         }
+//     }
+// }
+
+pipeline {
+    agent any
+
+    tools {
         nodejs 'NODE22'
     }
 
-    // parameters {
-    //     choice(
-    //         name: 'ENV',
-    //         choices: 'dev\npreprod\nprod',
-    //         description: 'Select environment'
-    //     )
-    // }
+    stages {
 
-    stages{
-        stage('Fetch code') {
-            agent{
-                label 'built-in'
-            }
-            steps{
-                git branch: 'main', url: 'https://github.com/cyanexttime/Angular-jenkins-test.git'
-            }
-        }
-        stage('Install dependencies') {
-            agent{
-                label 'built-in'
-            }
+        stage('Checkout') {
             steps {
-                sh 'npm install'
-                sh 'npm install -g @angular/cli'
+                // Multibranch pipelines auto-checkout the correct branch
+                checkout scm
             }
         }
-        
-        stage('Build') {
-            agent{
-                label 'built-in'
+
+        stage('Install dependencies') {
+            steps {
+                sh 'npm ci'
             }
+        }
+
+        stage('Build') {
             steps {
                 echo "Branch name: ${env.BRANCH_NAME}"
-                sh 'ng build'
-                sh 'zip -r angular-dist-of-${env.BRANCH_NAME}.zip dist/'
-                archiveArtifacts artifacts: "angular-dist-of-${env.BRANCH_NAME}.zip"
+
+                sh 'npx ng build'
+
+                // Use shell variable, not Groovy inside sh
+                sh 'zip -r angular-dist-of-$BRANCH_NAME.zip dist/'
+                archiveArtifacts artifacts: 'angular-dist-of-*.zip'
             }
         }
 
-        stage('Test')  {
-            agent{
-                label 'built-in'
-            }
+        stage('Test') {
             steps {
-                sh 'ng test'
+                sh 'npx ng test'
             }
         }
     }
