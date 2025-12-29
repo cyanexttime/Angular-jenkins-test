@@ -91,7 +91,7 @@ pipeline {
 
         stage('Test') {
             steps {
-                sh 'npx ng test --watch=false --browsers=ChromeHeadless'
+                sh 'npx ng test'
             }
         }
     }
