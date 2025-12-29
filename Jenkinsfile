@@ -5,13 +5,13 @@ pipeline{
         nodejs 'NODE22'
     }
 
-    parameters {
-        choice(
-            name: 'ENV',
-            choices: 'dev\npreprod\nprod',
-            description: 'Select environment'
-        )
-    }
+    // parameters {
+    //     choice(
+    //         name: 'ENV',
+    //         choices: 'dev\npreprod\nprod',
+    //         description: 'Select environment'
+    //     )
+    // }
 
     stages{
         stage('Fetch code') {
@@ -37,11 +37,10 @@ pipeline{
                 label 'built-in'
             }
             steps {
-                sh 'export $(cat .env | xargs)'
-                sh 'echo "Building for ENV=$ENV"'
+                echo "Branch name: ${env.BRANCH_NAME}"
                 sh 'ng build'
-                sh 'zip -r angular-dist-of-${ENV}.zip dist/'
-                archiveArtifacts artifacts: "angular-dist-of-${ENV}.zip"
+                sh 'zip -r angular-dist-of-${env.BRANCH_NAME}.zip dist/'
+                archiveArtifacts artifacts: "angular-dist-of-${env.BRANCH_NAME}.zip"
             }
         }
 
